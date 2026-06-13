@@ -1,0 +1,42 @@
+{% extends 'admin/base.html' %}
+{% load tags %}
+
+{% block extrahead %}
+<script>
+
+        window.addEventListener('load', () => {
+
+            const buttons = document.querySelectorAll('.action-btn');
+            const adminForm = document.querySelector('form[id="changelist-form"]');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if (confirm(`Selected Action is [ ${this.getAttribute('data-action').toUpperCase()} ]. Are you sure?`)) {
+                                if (!adminForm) return;
+
+                                const actionValue = this.getAttribute('data-action');
+                                const idValue = this.getAttribute('data-id');
+
+                                let actionInput = adminForm.querySelector('[name="action"]');
+                                actionInput.value = actionValue;
+                                if (!actionInput) {
+                                        return;
+                                }
+
+
+                                selectedInput = document.createElement('input');
+                                selectedInput.type = 'hidden';
+                                selectedInput.name = '_selected_action';
+                                selectedInput.value = idValue;
+                                adminForm.appendChild(selectedInput);
+
+
+                                console.log('Submitting with action:', actionValue, 'and id:', idValue);
+                                adminForm.submit();
+                        }
+                });
+            });
+        });
+</script>
+{% endblock %}
+

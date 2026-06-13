@@ -1,0 +1,35 @@
+# Linux
+*~
+.fuse*
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+*.bak
+
+# Visual Studio Code
+.vscode/
+.history/
+
+# JetBrains
+.idea/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.spec
+.cache
+
+# Django
+.env
+.venv
+db.sqlite3
+/static/
+/assets/
+/logs/
+/storage/
+
+/client/node_modules
+/client/dist
