@@ -1,0 +1,9 @@
+@import url('https://lib.arvancloud.ir/vazir-font/33.003/Farsi-Digits/Vazirmatn-FD-font-face.css');
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+    font-family: "Vazirmatn FD", Arial, sans-serif !important;
+}
