@@ -13,6 +13,7 @@ WORKER_WAIT: int = HOUR * 24
 # Cache key prefixes for Redis
 USER_SESSION_KEY_PREFIX: str = ":2:user-authentication-token-"
 VERIFICATION_CODE_CACHE_PREFIX: str = ":3:vcode-"
+VERIFICATION_CODE_LENGTH: int = 5
 
 # Cron Job Tracking
 CRON_JOB_TYPE_CELERY: int = 10

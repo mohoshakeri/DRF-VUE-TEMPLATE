@@ -2,7 +2,7 @@ import os
 
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path, include, register_converter
+from django.urls import include, path, register_converter
 
 from project.settings import (
     ADMIN_PATH,
@@ -21,13 +21,13 @@ register_converter(DateConverter, "date")
 
 # API configuration
 VERSION_CODE: str = "v1"
-API_PREFIX: str = f"api/{VERSION_CODE}"
+API_PREFIX: str = "api/{}".format(VERSION_CODE)
 
 urlpatterns = [
     # Admin panel endpoints
-    path(f"{ADMIN_PATH}/", include("massadmin.urls")),
+    path("{}/".format(ADMIN_PATH), include("massadmin.urls")),
     # API endpoints
-    path(f"{API_PREFIX}/auth/", include("example.urls")),
+    path("{}/auth/".format(API_PREFIX), include("authentication.urls")),
 ]
 
 # Admin panel customization

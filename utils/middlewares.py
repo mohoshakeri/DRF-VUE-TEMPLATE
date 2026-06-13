@@ -1,6 +1,7 @@
 import json
 import os
 import time
+from typing import Any
 
 from django.db import connection
 from django.http import Http404, HttpResponseForbidden, FileResponse
@@ -11,6 +12,31 @@ from project.log import logger_set
 from project.settings import MEDIA_URL
 
 logger = logger_set("Middleware")
+SENSITIVE_BODY_KEYS: set[str] = {
+    "authorization",
+    "code",
+    "key",
+    "otp",
+    "password",
+    "secret",
+    "token",
+}
+REDACTED_VALUE: str = "***"
+
+
+def _redact_sensitive_body(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {
+            key: (
+                REDACTED_VALUE
+                if str(key).lower() in SENSITIVE_BODY_KEYS
+                else _redact_sensitive_body(item)
+            )
+            for key, item in value.items()
+        }
+    if isinstance(value, list):
+        return [_redact_sensitive_body(item) for item in value]
+    return value
 
 
 class IPIdentificationMiddleware(MiddlewareMixin):
@@ -59,7 +85,7 @@ class LoggingMiddleware(MiddlewareMixin):
             except UnicodeDecodeError:
                 body = ""
 
-        request._parsed_body = body
+        request._parsed_body = _redact_sensitive_body(body)
 
     def process_response(self, request, response):
         duration = time.time() - request._start_time
@@ -121,9 +147,9 @@ class LoggingMiddleware(MiddlewareMixin):
 
 class MediaMiddleware(MiddlewareMixin):
     def process_request(self, request):
-        if request.path.startswith(f"{MEDIA_URL}"):
+        if request.path.startswith("{}".format(MEDIA_URL)):
             # Check Private Access
-            if request.path.startswith(f"{MEDIA_URL}admin/"):
+            if request.path.startswith("{}admin/".format(MEDIA_URL)):
                 user = request.user
                 if not user.is_authenticated or not (
                     user.is_staff or user.is_superuser
@@ -132,7 +158,7 @@ class MediaMiddleware(MiddlewareMixin):
 
             # Serve Files
             file_path = os.path.join(
-                settings.MEDIA_ROOT, request.path[len(f"{MEDIA_URL}") :]
+                settings.MEDIA_ROOT, request.path[len("{}".format(MEDIA_URL)) :]
             )
             if not os.path.exists(file_path):
                 raise Http404

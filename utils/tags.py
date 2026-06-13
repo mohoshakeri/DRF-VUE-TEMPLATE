@@ -1,83 +1,104 @@
-"""
-Template tags
-"""
+from datetime import date, datetime
+from typing import Any
 
 from django import template
-from django.urls import reverse
+from django.template.defaultfilters import linebreaksbr
 
-from project.settings import CORE_BASE_URL, STATIC_URL, ASSETS_URL, MEDIA_URL
-from tools.converters import md_to_html, number_to_string, add_thousand_separator
+from project.settings import ASSETS_URL, CORE_BASE_URL, MEDIA_URL, STATIC_URL
+from tools.converters import (
+    add_thousand_separator,
+    md_to_html as markdown_to_html,
+    number_to_string,
+    persian_english_converter,
+)
 from tools.datetimes import dt_to_text
 
 register = template.Library()
-DEFAULT = "***"
+DEFAULT: str = "***"
+
+
+# --- Collection Filters ---
+
+
+@register.filter(name="add")
+def add_values(first: Any, second: Any) -> Any:
+    try:
+        return first + second
+    except TypeError:
+        return first
 
 
 @register.filter
-def add(int1, int2):
-    return int1 + int2
-
-
-@register.filter
-def get_item(dictionary, key):
+def get_item(dictionary: dict | None, key: Any) -> Any:
+    if not dictionary:
+        return None
     return dictionary.get(key)
 
 
 @register.filter
-def get_item_or_zero(dictionary, key) -> int:
-    item = dictionary.get(key)
+def get_item_or_zero(dictionary: dict | None, key: Any) -> Any:
+    item: Any = get_item(dictionary, key)
     if item is not None:
         return item
     return 0
 
 
 @register.filter
-def get_index(list, index):
-    return list[index - 1]
+def get_index(items: list | tuple, index: int) -> Any:
+    try:
+        return items[int(index) - 1]
+    except (IndexError, TypeError, ValueError):
+        return DEFAULT
+
+
+# --- Date Filters ---
 
 
 @register.filter
-def standard_datetime(datetime, default=DEFAULT):
-    if datetime:
-        return dt_to_text(datetime)
+def standard_datetime(value: datetime | date | None, default: str = DEFAULT) -> str:
+    if value:
+        return dt_to_text(value)
     return default
 
 
 @register.filter
-def standard_date(datetime, default=DEFAULT):
-    if datetime:
-        return dt_to_text(datetime, time_check=False)
+def standard_date(value: datetime | date | None, default: str = DEFAULT) -> str:
+    if value:
+        return dt_to_text(value, time_check=False)
     return default
 
 
 @register.filter
-def datetime_diff(datetime2, datetime1):
-    return (datetime2 - datetime1).days // 365
-
-
-@register.filter
-def en_datetime(datetime, default=DEFAULT):
-    if datetime:
-        return dt_to_text(datetime, lang="English")
+def en_datetime(value: datetime | date | None, default: str = DEFAULT) -> str:
+    if value:
+        return dt_to_text(value, lang="English")
     return default
 
 
 @register.filter
-def md_to_html(content, default=DEFAULT):
+def datetime_diff(start: datetime | date, end: datetime | date) -> int:
+    return (start - end).days // 365
+
+
+# --- Text And Number Filters ---
+
+
+@register.filter(name="md_to_html")
+def render_markdown(content: Any, default: str = DEFAULT) -> str:
     if content:
-        return md_to_html(content)
+        return markdown_to_html(str(content))
     return default
 
 
 @register.filter
-def to_string(content, default=DEFAULT):
-    if content:
+def to_string(content: Any, default: str = DEFAULT) -> str:
+    if content is not None and content != "":
         return number_to_string(content)
     return default
 
 
 @register.filter
-def to_iso_number(number, default=DEFAULT):
+def to_iso_number(number: Any, default: str = DEFAULT) -> str | int:
     if number:
         return add_thousand_separator(number)
     if number == 0:
@@ -86,71 +107,88 @@ def to_iso_number(number, default=DEFAULT):
 
 
 @register.filter
-def multiply(number1, number2):
-    return number1 * number2
-
-
-@register.simple_tag
-def disk(path: str):
-    if path.startswith(("img", "audio", "video")):
-        return f"{CORE_BASE_URL}{ASSETS_URL}{path}"
-    if path.startswith("storage"):
-        return f"{CORE_BASE_URL}{MEDIA_URL}{path.replace('storage', '')}"
-    return f"{CORE_BASE_URL}{STATIC_URL}{path}"
-
-
-def _site_disk_path(path: str) -> str:
-    if path.startswith(("img", "audio", "video")):
-        return f"{ASSETS_URL}{path}"
-    if path.startswith("storage"):
-        return f"{MEDIA_URL}{path.replace('storage', '')}"
-    return f"{STATIC_URL}{path}"
-
-
-@register.simple_tag(takes_context=True)
-def site_disk(context, path: str):
-    path = _site_disk_path(path)
-    site = context.get("site")
-    if context.get("seo") and site:
-        return f"https://{site.domain}{path}"
-    return path
-
-
-@register.simple_tag(takes_context=True)
-def site_url(context, route: str, blog_id=None):
-    site = context.get("site")
-    if not site:
-        return "#"
-
-    if context.get("is_proxy_request"):
-        if route == "home":
-            return "/"
-        if route == "blog":
-            return f"/blog/{blog_id}/"
-        if route == "sitemap":
-            return "/sitemap.xml"
-        if route == "favicon":
-            return "/favicon.ico"
-        if route == "analysis_collect":
-            return "/analytics/collect/"
-        return "/"
-
-    if route == "home":
-        return reverse("website:render", kwargs={"domain": site.domain})
-    if route == "blog":
-        return reverse(
-            "website:render_blog",
-            kwargs={"domain": site.domain, "blog_id": blog_id},
-        )
-    if route == "sitemap":
-        return reverse("website:render_sitemap", kwargs={"domain": site.domain})
-    if route == "favicon":
-        return reverse("website:render_favicon", kwargs={"domain": site.domain})
-    if route == "analysis_collect":
-        return reverse("website:analysis_collect", kwargs={"domain": site.domain})
-    return reverse("website:render", kwargs={"domain": site.domain})
+def english_digits(content: Any) -> str:
+    return persian_english_converter(str(content))
 
 
 @register.filter
-def fix_enters(text):
-    return text.replace("\n", "<br>")
+def persian_digits(content: Any) -> str:
+    return persian_english_converter(str(content), reverse=True)
+
+
+@register.filter
+def fix_enters(text: Any) -> str:
+    if text is None:
+        return ""
+    return linebreaksbr(str(text))
+
+
+# --- Math Filters ---
+
+
+@register.filter
+def multiply(number1: int | float, number2: int | float) -> int | float:
+    return number1 * number2
+
+
+@register.filter
+def divide(number1: int | float, number2: int | float) -> float | None:
+    if not number2:
+        return None
+    return number1 / number2
+
+
+@register.filter
+def percent(number: int | float, total: int | float) -> float:
+    if not total:
+        return 0
+    return round((number / total) * 100, 2)
+
+
+# --- URL Tags ---
+
+
+def _asset_path(path: str) -> str:
+    clean_path: str = str(path).lstrip("/")
+    if clean_path.startswith(("http://", "https://")):
+        return clean_path
+    if clean_path.startswith(("img", "audio", "video")):
+        return "{}{}".format(ASSETS_URL, clean_path)
+    if clean_path == "storage":
+        return MEDIA_URL
+    if clean_path.startswith("storage/"):
+        return "{}{}".format(MEDIA_URL, clean_path[len("storage/") :])
+    return "{}{}".format(STATIC_URL, clean_path)
+
+
+@register.simple_tag
+def disk(path: str) -> str:
+    asset_path: str = _asset_path(path)
+    if asset_path.startswith(("http://", "https://")):
+        return asset_path
+    return "{}{}".format(CORE_BASE_URL.rstrip("/"), asset_path)
+
+
+@register.simple_tag(takes_context=True)
+def site_disk(context: dict, path: str) -> str:
+    asset_path: str = _asset_path(path)
+    site: Any = context.get("site")
+    if context.get("seo") and site:
+        return "https://{}{}".format(site.domain, asset_path)
+    return asset_path
+
+
+@register.simple_tag(takes_context=True)
+def query_update(context: dict, **kwargs: Any) -> str:
+    request: Any = context.get("request")
+    if not request:
+        return ""
+
+    query = request.GET.copy()
+    for key, value in kwargs.items():
+        if value is None:
+            query.pop(key, None)
+            continue
+        query[key] = value
+
+    return query.urlencode()

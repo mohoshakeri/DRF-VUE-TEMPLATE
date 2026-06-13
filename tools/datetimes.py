@@ -26,7 +26,7 @@ def format_time(hour: int, minute: int) -> str:
     Returns:
         Formatted time string in HH:MM format
     """
-    return f"{hour:02}:{minute:02}"
+    return "{:02}:{:02}".format(hour, minute)
 
 
 def format_date_text(
@@ -52,11 +52,15 @@ def format_date_text(
         Formatted date text string
     """
     if lang == "Persian":
-        date_text: str = f"{day} {month}" + (f" {year}" if year else "")
-        return date_text + (f" - ساعت {time_text}" if time_text else "")
+        date_text: str = "{} {}".format(day, month) + (
+            " {}".format(year) if year else ""
+        )
+        return date_text + (" - ساعت {}".format(time_text) if time_text else "")
     else:
-        date_text: str = f"{month} {day}" + (f", {year}" if year else "")
-        return date_text + (f" at {time_text}" if time_text else "")
+        date_text: str = "{} {}".format(month, day) + (
+            ", {}".format(year) if year else ""
+        )
+        return date_text + (" at {}".format(time_text) if time_text else "")
 
 
 def dt_to_text(

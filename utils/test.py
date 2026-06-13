@@ -4,7 +4,7 @@ Abstract base test classes.
 
 from typing import Literal
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from pydantic import BaseModel, Field
 from rest_framework.test import APITestCase
 
@@ -40,12 +40,13 @@ class WebAppAPITestCase(APITestCase):
 
     def base_setUp(self):
         # Auth
-        self.user = User.objects.create_user(
-            username="09101234567", password="testpassword"
+        user_model = get_user_model()
+        self.user = user_model.objects.create_user(
+            mobile="09101234567", password="testpassword"
         )
         self.user.initial_action()
         auth_token = Session(user_id=self.user.pk).create().token
-        self.auth_token = f"Bearer {auth_token}"
+        self.auth_token = "Bearer {}".format(auth_token)
 
     def run_tests(self):
         for test_case in self.test_cases:

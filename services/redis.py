@@ -46,7 +46,7 @@ class RedisClient:
             return str(obj)
         if isinstance(obj, (dt.datetime, dt.date)):
             return obj.isoformat()
-        raise TypeError(f"Type {type(obj)} not serializable")
+        raise TypeError("Type {} not serializable".format(type(obj)))
 
     def set_string(self, key: str, value: str, expire: int = DEFAULT_EXPIRE) -> None:
         """
@@ -163,7 +163,7 @@ class RedisClient:
 
         while True:
             cursor, keys = self.client.scan(
-                cursor=cursor, match=f"{prefix}*", count=100
+                cursor=cursor, match="{}*".format(prefix), count=100
             )
             for key in keys:
                 # Handle Redis scan duplicates

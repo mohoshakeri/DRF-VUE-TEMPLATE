@@ -17,14 +17,14 @@
                                 const actionValue = this.getAttribute('data-action');
                                 const idValue = this.getAttribute('data-id');
 
-                                let actionInput = adminForm.querySelector('[name="action"]');
-                                actionInput.value = actionValue;
+                                const actionInput = adminForm.querySelector('[name="action"]');
                                 if (!actionInput) {
                                         return;
                                 }
+                                actionInput.value = actionValue;
 
 
-                                selectedInput = document.createElement('input');
+                                const selectedInput = document.createElement('input');
                                 selectedInput.type = 'hidden';
                                 selectedInput.name = '_selected_action';
                                 selectedInput.value = idValue;
@@ -39,4 +39,3 @@
         });
 </script>
 {% endblock %}
-

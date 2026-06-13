@@ -43,7 +43,11 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"{action} {len(orphan_files)} orphan file(s) in {len(managed_dirs)} managed directorie(s)."
+                "{} {} orphan file(s) in {} managed directorie(s).".format(
+                    action,
+                    len(orphan_files),
+                    len(managed_dirs),
+                )
             )
         )
         if options["verbosity"] >= 2:
@@ -69,7 +73,9 @@ class Command(BaseCommand):
                     managed_dirs.add(upload_dir)
 
                 values = (
-                    model._default_manager.exclude(**{f"{field.name}__isnull": True})
+                    model._default_manager.exclude(
+                        **{"{}__isnull".format(field.name): True}
+                    )
                     .exclude(**{field.name: ""})
                     .values_list(field.name, flat=True)
                     .iterator()
@@ -125,7 +131,7 @@ class Command(BaseCommand):
         collapsed = []
         for directory in sorted(dirs):
             if any(
-                directory == parent or directory.startswith(f"{parent}/")
+                directory == parent or directory.startswith("{}/".format(parent))
                 for parent in collapsed
             ):
                 continue

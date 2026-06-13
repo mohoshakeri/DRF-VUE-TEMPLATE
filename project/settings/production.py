@@ -70,9 +70,9 @@ SECRET_KEY = KEY
 ADMIN_PATH = os.getenv("ADMIN_PATH")
 
 CORE_DOMAIN = os.getenv("CORE_DOMAIN")
-CORE_BASE_URL = f"https://{CORE_DOMAIN}"
+CORE_BASE_URL = "https://{}".format(CORE_DOMAIN)
 APP_DOMAIN = os.getenv("APP_DOMAIN")
-APP_BASE_URL = f"https://{APP_DOMAIN}"
+APP_BASE_URL = "https://{}".format(APP_DOMAIN)
 
 # Hosts and origins
 HOSTS = os.getenv("HOSTS").split(",")

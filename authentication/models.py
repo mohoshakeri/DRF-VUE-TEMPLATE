@@ -2,8 +2,8 @@ from typing import Any, Optional
 
 from django.contrib.auth.models import (
     AbstractBaseUser,
-    PermissionsMixin,
     BaseUserManager,
+    PermissionsMixin,
 )
 
 from project.log import logger_set
@@ -76,6 +76,8 @@ class User(AbstractModel, AbstractBaseUser, PermissionsMixin):
 
     @property
     def dialog_name(self) -> str:
+        if not self.name:
+            return self.mobile
         name: str = self.name
         return add_YE_to_persian_name(name)
 

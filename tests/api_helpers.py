@@ -37,17 +37,20 @@ class FakeRedisClient:
             if key.startswith(prefix):
                 yield key.encode("utf-8")
 
+    def flush(self):
+        self.storage = {}
+
 
 fake_redis_client = FakeRedisClient()
 
 
 def install_fake_redis():
+    import authentication.services
     import services.redis
-    import utils.abstract
     import utils.session
 
+    authentication.services.redis_client = fake_redis_client
     services.redis.redis_client = fake_redis_client
-    utils.abstract.redis_client = fake_redis_client
     utils.session.redis_client = fake_redis_client
 
 
@@ -70,7 +73,6 @@ def pack(title, method, auth_required, expected_code, input=None):
 def create_user(mobile="09101234567", name="کاربر تست", category=1):
     user = User.objects.create_user(mobile=mobile, password="testpassword")
     user.initial_action()
-    user.info.name = name
-    user.info.category = category
-    user.info.save()
+    user.name = name
+    user.save(update_fields=["name", "update"])
     return user

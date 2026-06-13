@@ -13,13 +13,16 @@ __all__ = [
     "URLValidator",
     "EmailValidator",
     "GmailValidtor",
+    "GmailValidator",
     "MobileValidtor",
+    "MobileValidator",
     "MinValueValidator",
     "MaxValueValidator",
     "MinLengthValidator",
     "MaxLengthValidator",
     "PersianLetterValidator",
     "FullPersianLetterValidator",
+    "MinimumAgeValidator",
     "NotInPastValidtor",
     "NotInFutureValidtor",
     "NationalCodeValidator",
@@ -31,11 +34,11 @@ from tools.datetimes import dt
 class BaseValidator:
     def __eq__(self, other):
         # Check Equality For Serialization
-        return isinstance(other, FullPersianLetterValidator)
+        return self.__class__ is other.__class__ and self.__dict__ == other.__dict__
 
     def deconstruct(self):
         # Return Tuple For Serialization: (Path, Args, Kwargs)
-        path = f"{self.__class__.__module__}.{self.__class__.__qualname__}"
+        path = "{}.{}".format(self.__class__.__module__, self.__class__.__qualname__)
         return path, [], {}
 
 
@@ -70,13 +73,13 @@ class FullPersianLetterValidator(BaseValidator):
             )
 
 
-class MobileValidtor(BaseValidator):
+class MobileValidator(BaseValidator):
     def __call__(self, value):
         if not re.match(r"^09\d{9}$", value):
             raise ValidationError("Must be a standard mobile like 0910*******.")
 
 
-class GmailValidtor(BaseValidator):
+class GmailValidator(BaseValidator):
     def __call__(self, value):
         if not re.match(r"^[a-zA-Z0-9._%+-]+@gmail\.com$", value):
             raise ValidationError("Must be a gmail.")
@@ -93,7 +96,7 @@ class MinimumAgeValidator(BaseValidator):
 
         if value > min_date:
             raise ValidationError(
-                f"The date must be at least {self.min_years} years ago."
+                "The date must be at least {} years ago.".format(self.min_years)
             )
 
 
@@ -106,13 +109,13 @@ class NationalCodeValidator(BaseValidator):
         if ncode in [10 * str(i) for i in range(10)]:
             return False
 
-        sum = 0
+        total = 0
 
         for i, l in enumerate(ncode[:-1]):
-            sum += (10 - i) * int(l)
+            total += (10 - i) * int(l)
 
-        if ((sum % 11 < 2) and (int(ncode[-1]) == (sum % 11))) or (
-            (sum % 11 >= 2) and (int(ncode[-1]) == (11 - (sum % 11)))
+        if ((total % 11 < 2) and (int(ncode[-1]) == (total % 11))) or (
+            (total % 11 >= 2) and (int(ncode[-1]) == (11 - (total % 11)))
         ):
             return True
         return False
@@ -138,3 +141,7 @@ class NotInPastValidtor(BaseValidator):
             isinstance(value, dt.datetime) and now > value
         ):
             raise ValidationError("Must be in future")
+
+
+GmailValidtor = GmailValidator
+MobileValidtor = MobileValidator

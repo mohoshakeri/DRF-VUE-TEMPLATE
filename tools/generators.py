@@ -25,7 +25,7 @@ def generate_unique_number() -> str:
     """
     time_stamp: int = round(time.time() * 100000000)
     random_num: int = random.randint(11, 99)
-    return f"{time_stamp}{random_num}"
+    return "{}{}".format(time_stamp, random_num)
 
 
 def generate_ngrams(text: str, min_length: int = 2) -> List[str]:

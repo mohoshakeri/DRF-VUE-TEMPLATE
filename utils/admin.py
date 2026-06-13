@@ -67,11 +67,13 @@ class AbstractAdmin(admin.ModelAdmin):
         return self._queryset_handler(super().get_queryset(request))
 
     def get_search_results(self, request, queryset, search_term):
-        if search_term:
-            q = search_term
-            queryset = self._queryset_handler(queryset.filter(q))
-
-        return queryset.distinct(), False
+        queryset, may_have_duplicates = super().get_search_results(
+            request,
+            queryset,
+            search_term,
+        )
+        queryset = self._queryset_handler(queryset)
+        return queryset.distinct(), may_have_duplicates
 
     # 2. DISPLAYS
 
@@ -210,7 +212,9 @@ class AbstractAdmin(admin.ModelAdmin):
     # 4. ACTIONS
     def get_actions(self, request):
         if self.has_change_permission(request):
-            self.actions = (mass_change_selected,) + self.actions
+            actions = tuple(self.actions or ())
+            if mass_change_selected not in actions:
+                self.actions = (mass_change_selected,) + actions
 
         return super().get_actions(request)
 

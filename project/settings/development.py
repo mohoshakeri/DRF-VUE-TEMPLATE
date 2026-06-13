@@ -49,9 +49,9 @@ SECRET_KEY = KEY
 # Path and URLs
 ADMIN_PATH = "admin"
 CORE_DOMAIN = "localhost:4110"
-CORE_BASE_URL = f"http://{CORE_DOMAIN}"
+CORE_BASE_URL = "http://{}".format(CORE_DOMAIN)
 APP_DOMAIN = "localhost:4130"
-APP_BASE_URL = f"http://{APP_DOMAIN}"
+APP_BASE_URL = "http://{}".format(APP_DOMAIN)
 
 # Hosts and origins
 HOSTS = ["localhost"]

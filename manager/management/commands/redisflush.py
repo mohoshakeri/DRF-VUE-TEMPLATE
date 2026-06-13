@@ -25,7 +25,7 @@ class Command(BaseCommand):
             keys_to_delete = []
             while cursor != 0:
                 cursor, keys = redis_client.scan(
-                    cursor=cursor, match=f"{prefix}*", count=100
+                    cursor=cursor, match="{}*".format(prefix), count=100
                 )
                 for key in keys:
                     keys_to_delete.append(key)

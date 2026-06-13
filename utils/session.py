@@ -1,7 +1,7 @@
 import secrets
-from typing import Optional, Generator
+from typing import Any, Generator, Optional
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from pydantic import BaseModel, Field, PrivateAttr
 
@@ -47,12 +47,12 @@ class Session(BaseModel):
             dt.datetime.now() + dt.timedelta(seconds=SESSION_FULL_AGE)
         ).timestamp()
     )
-    _user_obj: Optional[User] = PrivateAttr(default=None)
+    _user_obj: Optional[Any] = PrivateAttr(default=None)
 
     @property
     def full_token(self) -> str:
         """Get full Redis key for session."""
-        return USER_SESSION_KEY_PREFIX + self.token
+        return "{}{}".format(USER_SESSION_KEY_PREFIX, self.token)
 
     def initialize(self) -> Optional["Session"]:
         """
@@ -85,14 +85,18 @@ class Session(BaseModel):
                 key=self.full_token, value=self.model_dump(), expire=SESSION_RENEWAL_AGE
             )
             return self
-        raise ConflictTokenError(f"TOKEN: {self.token}")
+        raise ConflictTokenError("TOKEN: {}".format(self.token))
 
     @property
     def is_accessable(self) -> bool:
         """Check if session is valid and not expired."""
         return bool(self.user_id and self.expired > dt.datetime.now().timestamp())
 
-    def get_user(self) -> Optional[User]:
+    @property
+    def is_accessible(self) -> bool:
+        return self.is_accessable
+
+    def get_user(self) -> Optional[Any]:
         """
         Retrieve user object from database.
 
@@ -100,7 +104,8 @@ class Session(BaseModel):
             User object if exists, None otherwise
         """
         try:
-            user: User = User.objects.get(id=self.user_id)
+            user_model = get_user_model()
+            user: Any = user_model.objects.get(id=self.user_id)
             self._user_obj = user
             return user
         except ObjectDoesNotExist:

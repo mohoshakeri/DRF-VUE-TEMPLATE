@@ -4,10 +4,10 @@ from typing import Dict
 
 from CONSTANTS import (
     ADMIN_SESSION_COOKIE_AGE,
-    PAGINATE_PAGE_SIZE,
-    VERIFICATION_CODE_THROTTLE_RATES_PER_HOUR,
     ANONYMOUS_THROTTLE_RATES_PER_HOUR,
+    PAGINATE_PAGE_SIZE,
     USER_THROTTLE_RATES_PER_HOUR,
+    VERIFICATION_CODE_THROTTLE_RATES_PER_HOUR,
 )
 
 # Build paths inside the project
@@ -83,11 +83,11 @@ MANAGEMENT_ARGS = [
 
 # Password hashing configuration
 PASSWORD_HASHERS = [
-    "django.contrib.authentication.hashers.BCryptPasswordHasher",
-    "django.contrib.authentication.hashers.PBKDF2PasswordHasher",
-    "django.contrib.authentication.hashers.PBKDF2SHA1PasswordHasher",
-    "django.contrib.authentication.hashers.Argon2PasswordHasher",
-    "django.contrib.authentication.hashers.ScryptPasswordHasher",
+    "django.contrib.auth.hashers.BCryptPasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
+    "django.contrib.auth.hashers.Argon2PasswordHasher",
+    "django.contrib.auth.hashers.ScryptPasswordHasher",
 ]
 
 # Middleware configuration
@@ -126,9 +126,9 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.ScopedRateThrottle",
     ],
     "DEFAULT_THROTTLE_RATES": {
-        "anon": f"{ANONYMOUS_THROTTLE_RATES_PER_HOUR}/hour",
-        "user": f"{USER_THROTTLE_RATES_PER_HOUR}/hour",
-        "vcode": f"{VERIFICATION_CODE_THROTTLE_RATES_PER_HOUR}/hour",
+        "anon": "{}/hour".format(ANONYMOUS_THROTTLE_RATES_PER_HOUR),
+        "user": "{}/hour".format(USER_THROTTLE_RATES_PER_HOUR),
+        "vcode": "{}/hour".format(VERIFICATION_CODE_THROTTLE_RATES_PER_HOUR),
     },
     "PAGE_SIZE": PAGINATE_PAGE_SIZE,
 }

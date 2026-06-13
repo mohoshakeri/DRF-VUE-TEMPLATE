@@ -18,8 +18,10 @@ class ImageTool:
 
     @staticmethod
     def _get_average_brightness(image: Image.Image) -> float:
-        pixel = image.convert("RGB").resize((1, 1), Image.Resampling.BILINEAR).getpixel(
-            (0, 0)
+        pixel = (
+            image.convert("RGB")
+            .resize((1, 1), Image.Resampling.BILINEAR)
+            .getpixel((0, 0))
         )
         red, green, blue = pixel
 
@@ -28,7 +30,9 @@ class ImageTool:
     @staticmethod
     def _invert_logo_colors(logo: Image.Image) -> Image.Image:
         red, green, blue, alpha = logo.split()
-        inverted = ImageOps.invert(Image.merge("RGB", (red, green, blue))).convert("RGBA")
+        inverted = ImageOps.invert(Image.merge("RGB", (red, green, blue))).convert(
+            "RGBA"
+        )
         inverted.putalpha(alpha)
 
         return inverted
@@ -73,7 +77,7 @@ class ImageTool:
             y = image.height - logo.height - margin_y
 
         else:
-            raise ValueError(f"Unsupported Position: {position}")
+            raise ValueError("Unsupported Position: {}".format(position))
 
         target_area = image.crop((x, y, x + logo.width, y + logo.height))
         brightness = self._get_average_brightness(target_area)
