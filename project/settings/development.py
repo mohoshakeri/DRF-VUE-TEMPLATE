@@ -9,7 +9,7 @@ DEBUG = True
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "project",
+        "NAME": "xxx",
         "USER": "postgres",
         "PASSWORD": "1234",
         "HOST": "localhost",
@@ -47,6 +47,7 @@ SECRET_KEY = KEY
 
 
 # Path and URLs
+CORE_BASE_PATH = "/"
 ADMIN_PATH = "admin"
 APP_BASE_URL = "http://localhost:4130"
 CORE_BASE_URL = "{}{}".format(APP_BASE_URL, CORE_BASE_PATH)

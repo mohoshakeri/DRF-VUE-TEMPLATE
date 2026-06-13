@@ -67,8 +67,8 @@ KEY = os.getenv("KEY")
 SECRET_KEY = KEY
 
 # Admin path configuration
+CORE_BASE_PATH = "/server"
 ADMIN_PATH = os.getenv("ADMIN_PATH")
-
 DOMAIN = os.getenv("DOMAIN")
 APP_BASE_URL = "https://{}".format(DOMAIN)
 CORE_BASE_URL = "{}{}".format(APP_BASE_URL, CORE_BASE_PATH)
@@ -90,7 +90,7 @@ STATICFILES_DIRS = []
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # Logging configuration
-LOG_DIR = "/var/log/project"
+LOG_DIR = "/var/log/xxx"
 
 # Celery broker
 CELERY_BROKER_URL = REDIS_SERVER

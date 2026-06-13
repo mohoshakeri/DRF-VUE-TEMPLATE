@@ -15,7 +15,6 @@ CELERY_BROKER_URL = REDIS_SERVER
 MIDDLEWARE = [
     middleware
     for middleware in MIDDLEWARE
-    if middleware != "author.middlewares.AuthorDefaultBackendMiddleware"
 ]
 
 DATABASES = {

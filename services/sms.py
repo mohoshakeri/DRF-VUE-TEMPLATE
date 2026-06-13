@@ -19,6 +19,7 @@ class MockSmsService:
                 "message": "Mock SMS sent",
                 "mobile": mobile,
                 "provider": self.provider_name,
+                "code": code,
             }
         )
         return payload

@@ -47,7 +47,7 @@ RUN npm install
 RUN npx vite build
 
 # Create necessary directories
-RUN mkdir -p /var/log/project
+RUN mkdir -p /var/log/xxx
 
 # System Config Files
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf

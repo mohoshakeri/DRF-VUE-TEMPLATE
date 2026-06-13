@@ -25,7 +25,7 @@ class _NormalizeDigitsSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields: list[str] = ["id", "mobile", "name", "is_staff"]
+        fields: list[str] = ["mobile", "name"]
         read_only_fields: list[str] = fields
 
 

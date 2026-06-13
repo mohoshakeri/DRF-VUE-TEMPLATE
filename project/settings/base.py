@@ -36,7 +36,6 @@ AUTH_USER_MODEL = "authentication.User"
 # URLs and deployment configuration
 ROOT_URLCONF = "project.urls"
 WSGI_APPLICATION = "project.wsgi.application"
-CORE_BASE_PATH = "/server"
 
 TEMPLATES = [
     {
@@ -100,7 +99,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "author.middlewares.AuthorDefaultBackendMiddleware",
     "utils.middlewares.IPIdentificationMiddleware",
     "utils.middlewares.IPBlockMiddleware",
     "utils.middlewares.LoggingMiddleware",

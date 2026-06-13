@@ -2,10 +2,10 @@ SHELL=/bin/bash
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 # Normal Management Commands
-0 2 * * * cd /app && PROCESS_TYPE=cron python manage.py run_cron_job command cleanup_orphan_files >> /var/log/project/cron.log 2>&1
+0 2 * * * cd /app && PROCESS_TYPE=cron python manage.py run_cron_job command cleanup_orphan_files >> /var/log/xxx/cron.log 2>&1
 
 # Celety Time-Based Tasks
-# 0 3 * * * cd /app && PROCESS_TYPE=cron python manage.py run_cron_job celery "EXAMPLE" >> /var/log/project/cron.log 2>&1
+# 0 3 * * * cd /app && PROCESS_TYPE=cron python manage.py run_cron_job celery "EXAMPLE" >> /var/log/xxx/cron.log 2>&1
 
 # Repeat Tasks
-# 0 0,15,30,45 * * * cd /app && PROCESS_TYPE=cron python manage.py run_cron_job celery "EXAMPLE" >> /var/log/project/cron.log 2>&1
+# 0 0,15,30,45 * * * cd /app && PROCESS_TYPE=cron python manage.py run_cron_job celery "EXAMPLE" >> /var/log/xxx/cron.log 2>&1

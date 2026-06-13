@@ -1,8 +1,12 @@
 from django.contrib import admin
+from django.contrib.auth.models import Group
+from django_celery_results.models import GroupResult
 
 from utils.admin import AbstractAdmin
-
 from .models import *
+
+admin.site.unregister(Group)
+admin.site.unregister(GroupResult)
 
 
 @admin.register(User)

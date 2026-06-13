@@ -71,6 +71,9 @@ class User(AbstractModel, AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = "mobile"
 
+    def get_full_name(self):
+        return self.name or self.mobile
+
     def __str__(self) -> str:
         return self.mobile
 

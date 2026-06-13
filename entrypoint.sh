@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Create Logs Directories
-mkdir -p /var/log/project
+mkdir -p /var/log/xxx
 
 # Run Migrations
 python manage.py migrate --skip-checks

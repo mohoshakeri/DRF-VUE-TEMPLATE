@@ -25,6 +25,7 @@ API_PREFIX: str = "api/{}".format(VERSION_CODE)
 
 urlpatterns = [
     # Admin panel endpoints
+    path("{}/".format(ADMIN_PATH), admin.site.urls),
     path("{}/".format(ADMIN_PATH), include("massadmin.urls")),
     # API endpoints
     path("{}/auth/".format(API_PREFIX), include("authentication.urls")),
@@ -35,7 +36,6 @@ admin.AdminSite.site_title = "project"
 admin.AdminSite.site_header = "project"
 admin.AdminSite.site_url = APP_BASE_URL
 admin.AdminSite.empty_value_display = "* * *"
-
 
 if not IS_PRODUCTION:
     urlpatterns += static(STATIC_URL, document_root=os.path.join(BASE_DIR, "static"))
