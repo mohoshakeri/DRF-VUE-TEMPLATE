@@ -69,15 +69,15 @@ SECRET_KEY = KEY
 # Admin path configuration
 ADMIN_PATH = os.getenv("ADMIN_PATH")
 
-CORE_DOMAIN = os.getenv("CORE_DOMAIN")
-CORE_BASE_URL = "https://{}".format(CORE_DOMAIN)
-APP_DOMAIN = os.getenv("APP_DOMAIN")
-APP_BASE_URL = "https://{}".format(APP_DOMAIN)
+DOMAIN = os.getenv("DOMAIN")
+APP_BASE_URL = "https://{}".format(DOMAIN)
+CORE_BASE_URL = "{}{}".format(APP_BASE_URL, CORE_BASE_PATH)
+FORCE_SCRIPT_NAME = CORE_BASE_PATH
 
 # Hosts and origins
-HOSTS = os.getenv("HOSTS").split(",")
+HOSTS = os.getenv("HOSTS", DOMAIN).split(",")
 ALLOWED_HOSTS = HOSTS
-ORIGINS = os.getenv("ORIGINS").split(",")
+ORIGINS = os.getenv("ORIGINS", APP_BASE_URL).split(",")
 
 # Security configuration
 IP_BLOCKEDS = (

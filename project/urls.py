@@ -6,7 +6,7 @@ from django.urls import include, path, register_converter
 
 from project.settings import (
     ADMIN_PATH,
-    CORE_BASE_URL,
+    APP_BASE_URL,
     STATIC_URL,
     IS_PRODUCTION,
     BASE_DIR,
@@ -33,7 +33,7 @@ urlpatterns = [
 # Admin panel customization
 admin.AdminSite.site_title = "project"
 admin.AdminSite.site_header = "project"
-admin.AdminSite.site_url = CORE_BASE_URL
+admin.AdminSite.site_url = APP_BASE_URL
 admin.AdminSite.empty_value_display = "* * *"
 
 

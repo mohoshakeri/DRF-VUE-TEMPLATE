@@ -36,7 +36,7 @@ AUTH_USER_MODEL = "authentication.User"
 # URLs and deployment configuration
 ROOT_URLCONF = "project.urls"
 WSGI_APPLICATION = "project.wsgi.application"
-SHORT_LINK_PATH = "s"
+CORE_BASE_PATH = "/server"
 
 TEMPLATES = [
     {
@@ -146,8 +146,8 @@ CELERY_TIMEZONE = "Asia/Tehran"
 CELERY_RESULT_EXTENDED = True
 CELERY_RESULT_BACKEND = "django-db"
 
-# Client application redirect URLs
-APP_URLS: Dict[str, str] = {}
+# Client application redirect Pathes
+APP_PATHES: Dict[str, str] = {}
 
 # Django Simorgh
 DJANGO_ADMIN_THEME_COLOR = "blue"

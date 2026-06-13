@@ -395,7 +395,6 @@ const isValid = await verifyForm([
 ## Frontend Run Checklist
 
 - [ ] Install client dependencies before typecheck or build.
-- [ ] Configure `VITE_BACKEND_BASE_URL` when needed.
 - [ ] Run typecheck after TypeScript changes.
 - [ ] Run build after frontend structure changes.
 
@@ -412,7 +411,7 @@ npm run build
 Default backend base URL:
 
 ```text
-VITE_BACKEND_BASE_URL=http://localhost:4110/api/v1
+/server/api/v1
 ```
 
 ## Testing And Verification Checklist

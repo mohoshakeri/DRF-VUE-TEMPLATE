@@ -48,15 +48,14 @@ SECRET_KEY = KEY
 
 # Path and URLs
 ADMIN_PATH = "admin"
-CORE_DOMAIN = "localhost:4110"
-CORE_BASE_URL = "http://{}".format(CORE_DOMAIN)
-APP_DOMAIN = "localhost:4130"
-APP_BASE_URL = "http://{}".format(APP_DOMAIN)
+APP_BASE_URL = "http://localhost:4130"
+CORE_BASE_URL = "{}{}".format(APP_BASE_URL, CORE_BASE_PATH)
+FORCE_SCRIPT_NAME = CORE_BASE_PATH
 
 # Hosts and origins
 HOSTS = ["localhost"]
 ALLOWED_HOSTS = ["*"]
-ORIGINS = ["http://localhost:4110", "http://localhost:4130"]
+ORIGINS = [APP_BASE_URL]
 
 # Security configuration
 IP_BLOCKEDS = []

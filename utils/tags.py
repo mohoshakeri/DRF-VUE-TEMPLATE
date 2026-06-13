@@ -4,7 +4,7 @@ from typing import Any
 from django import template
 from django.template.defaultfilters import linebreaksbr
 
-from project.settings import ASSETS_URL, CORE_BASE_URL, MEDIA_URL, STATIC_URL
+from project.settings import APP_BASE_URL, ASSETS_URL, MEDIA_URL, STATIC_URL
 from tools.converters import (
     add_thousand_separator,
     md_to_html as markdown_to_html,
@@ -166,7 +166,7 @@ def disk(path: str) -> str:
     asset_path: str = _asset_path(path)
     if asset_path.startswith(("http://", "https://")):
         return asset_path
-    return "{}{}".format(CORE_BASE_URL.rstrip("/"), asset_path)
+    return "{}{}".format(APP_BASE_URL.rstrip("/"), asset_path)
 
 
 @register.simple_tag(takes_context=True)
