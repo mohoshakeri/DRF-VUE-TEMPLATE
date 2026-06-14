@@ -3,6 +3,7 @@ from django.contrib.admin.utils import display_for_field as base_display_for_fie
 from django.db import models
 from django.db.models import BooleanField, NullBooleanField
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django_json_widget.widgets import JSONEditorWidget
 from jalali_date_new.fields import JalaliDateTimeField, JalaliDateField
 from jalali_date_new.widgets import (
@@ -130,8 +131,10 @@ class AbstractAdmin(admin.ModelAdmin):
             for action_name in actions.keys()
             if action_name not in self.exclude_raw_actions
         ]
+        if not buttons:
+            return "-"
 
-        return format_html(" ".join(buttons))
+        return mark_safe(" ".join(buttons))
 
     action_raw_buttons.short_description = "Actions"
 

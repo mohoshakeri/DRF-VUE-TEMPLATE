@@ -5,6 +5,7 @@ DEBUG = False
 SECRET_KEY = "ktvI9-rYqmgR8aDNVYqAnZ5ErWAVTj552OIouLEqyzg="
 REDIS_SERVER = "redis://localhost:6379/15"
 ADMIN_PATH = "admin"
+CORE_BASE_PATH = "/"
 APP_BASE_URL = "http://testserver"
 CORE_BASE_URL = "{}{}".format(APP_BASE_URL, CORE_BASE_PATH)
 FORCE_SCRIPT_NAME = CORE_BASE_PATH
