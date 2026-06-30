@@ -40,16 +40,11 @@ class AbstractAdmin(admin.ModelAdmin):
         },
     }
     list_filter_classes = []
-    display_excludes = []
-    display_includes = []
-    staff_fileds = []
     select_related_fields = []
     prefetch_related_fields = []
-    raw_actions = []
+    raw_action_names = ()
     raw_actions_classes = {"delete_selected": "btn-error"}
-    exclude_raw_actions = ["mass_change_selected"]
     list_per_page = 100
-    free_access = False
     ordering = ("-create", "-update")
     date_hierarchy = "create"
 
@@ -68,6 +63,9 @@ class AbstractAdmin(admin.ModelAdmin):
         return self._queryset_handler(super().get_queryset(request))
 
     def get_search_results(self, request, queryset, search_term):
+        if not search_term or not self.get_search_fields(request):
+            return self._queryset_handler(queryset), False
+
         queryset, may_have_duplicates = super().get_search_results(
             request,
             queryset,
@@ -79,48 +77,17 @@ class AbstractAdmin(admin.ModelAdmin):
     # 2. DISPLAYS
 
     def get_list_display(self, request):
-        # Get All Field Names From The Model
-        model_fields = [field.name for field in self.model._meta.fields]
+        fields_display = list(super().get_list_display(request))
+        self._raw_actions = self.get_actions(request)
 
-        # Get All Property Names That Are Not Methods And Not Private
-        property_fields = [
-            attr
-            for attr in dir(self.model)
-            if isinstance(getattr(self.model, attr), property)
-            and not attr.startswith("_")
-        ]
+        if self.raw_action_names and "action_raw_buttons" not in fields_display:
+            insert_index = 1 if fields_display and fields_display[0] == "id" else 0
+            fields_display.insert(insert_index, "action_raw_buttons")
 
-        # Combine Fields And Properties
-        combined_fields = model_fields + property_fields + list(self.display_includes)
-
-        # Now Handle Boolean Properties For Admin Icon
-        for prop in property_fields:
-            value = getattr(self.model, prop)
-            # Only Boolean Properties
-            if value.fget and value.fget.__annotations__.get("return") is bool:
-                # If Already Exists, No Need To Add Again
-                if not hasattr(self.__class__, prop):
-                    # Wrap Property To Function And Add Boolean Attribute
-                    def wrapper(self, obj, prop=prop):
-                        return getattr(obj, prop)
-
-                    wrapper.boolean = True
-                    wrapper.short_description = prop.replace("_", " ").title()
-                    setattr(self.__class__, prop, wrapper)
-
-        # Exclude The Fields That Are In display_excludes
-        fields_display = [
-            field for field in combined_fields if field not in self.display_excludes
-        ]
-
-        actions = super().get_actions(request)
-        self.raw_actions = actions
-        fields_display.insert(1, "action_raw_buttons")
-
-        return fields_display
+        return tuple(fields_display)
 
     def action_raw_buttons(self, obj):
-        actions = self.raw_actions
+        actions = getattr(self, "_raw_actions", {})
         buttons = [
             '<button class="action-btn button btn btn-sm {}" type="button" data-action="{}" data-id="{}">{}</button>'.format(
                 self.raw_actions_classes.get(action_name, "btn-primary"),
@@ -128,8 +95,8 @@ class AbstractAdmin(admin.ModelAdmin):
                 obj.id,
                 action_name.replace("selected", "").replace("_", " ").title(),
             )
-            for action_name in actions.keys()
-            if action_name not in self.exclude_raw_actions
+            for action_name in self.raw_action_names
+            if action_name in actions
         ]
         if not buttons:
             return "-"
@@ -181,10 +148,7 @@ class AbstractAdmin(admin.ModelAdmin):
     # 3. FORMS
 
     def get_fields(self, request, obj=None):
-        if self.free_access or request.user.is_superuser:
-            fields = super().get_fields(request, obj)
-        else:
-            fields = self.staff_fileds
+        fields = super().get_fields(request, obj)
 
         many_to_many_rels = [
             field.name

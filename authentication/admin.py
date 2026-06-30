@@ -11,10 +11,6 @@ admin.site.unregister(GroupResult)
 
 @admin.register(User)
 class UserAdmin(AbstractAdmin):
+    list_display = ("id", "mobile", "name", "is_active", "is_staff", "create")
     search_fields = ("mobile", "name")
-    display_excludes = (
-        "password",
-        "groups",
-        "user_permissions",
-    )
     list_filter = ("is_active", "is_staff", "is_superuser")
